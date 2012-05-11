@@ -1,11 +1,15 @@
 (function(){
-	var stage,
-		scene,
+	var stage = Sprite3D.stage(),
+		scene = stage.appendChild( Sprite3D.create() ),
 		boxContainer,
-		sw, sh,
-		px, py,
-		ppx, ppy,
-		cpx, cpy,
+		sw = window.innerWidth, 
+		sh = window.innerHeight,
+		px = -0.17849898580121704, 
+		py = 0.4572815533980582,
+		ppx = 0, 
+		ppy = 0,
+		cpx = -0.17849898580121704, 
+		cpy = 0.4572815533980582,
 		boxSize = 575,
 		lastVache,
 		cows = [],
@@ -20,162 +24,8 @@
 		uforx = 0,
 		ufosx = .12,
 		lastFrame,
+		invite,
 		boxTop;
-
-	var init = function() {
-	
-		stage = Sprite3D.createCenteredContainer();
-		sw = window.innerWidth;
-		sh = window.innerHeight;
-		px = -0.17849898580121704;
-		py = 0.4572815533980582;
-		cpx = -0.17849898580121704;
-		cpy = 0.4572815533980582;
-		ppx = 0;
-		ppy = 0;
-	
-		scene = stage.addChild( new Sprite3D() );
-	 
-		// BOX //
-		boxContainer = stage.addChild( 
-			new Sprite3D()
-				.setId("boxContainer")
-				.setRegistrationPoint( 640, 640, 0 )
-				.setPosition( 0,200,-600)
-				.setRotation( 70,0,0 )
-				.setTransformString( "_p _rx _rz _ry _s" )
-				.update()
-		);
-		boxTop = boxContainer.addChild(
-			new Sprite3D()
-				.setId("boxTop")
-				.setPosition( 358, 362, 231 )
-				.update()
-		);
-		// BOX SIDES //
-		addBoxSide( "boxSide1", 358, 937, 0 );
-		addBoxSide( "boxSide2", 358, 362, 270 );
-		addBoxSide( "boxSide3", 933, 362, 180 );
-		addBoxSide( "boxSide4", 933, 937, 90 );
-	
-		// COWS //
-		for( var i = 0; i < 5; i++ ) {
-			var x = (Math.random()*.8+.1),
-				flipped = Math.random()>.5;
-			cows.push( boxTop.addChild( 
-				new Sprite3D()
-					.setClassName("vache"+Math.ceil(Math.random()*3))
-					.setRegistrationPoint( 38, 78, 0 )
-					.setTransformOrigin( "38px", "78px" )
-					.setPosition( x*boxSize, (Math.random()*.8+.1)*boxSize, 0 )
-					.setRotation( -90, (x-.5) * 45, 0 )
-					.setProperty( "flipped", flipped )
-					.addEventListener( "mouseover", onVacheTouch )
-					.addEventListener( "touchstart", onVacheTouch )
-					.update()
-			) );
-		}
-	
-		// BANNER //
-		boxTop.addChild( 
-			new Sprite3D()
-				.setId("banner")
-				.setRegistrationPoint( 0, 332, 0 )
-				.setTransformOrigin( "0px", "332px" )
-				.setPosition( 10, 60, 0 )
-				.setRotation( -90, .4, 0 )
-				.update()
-		);
-	
-		// SUN //
-		boxTop.addChild( 
-			new Sprite3D()
-				.setId("sun")
-				.setTransformString( "_p _rx _rz _ry _s" )
-				.setRegistrationPoint( 125, 750-136, 0 )
-				.setTransformOrigin( "125px", (750-136)+"px" )
-				.setPosition( boxSize * .92, -250, 360 )
-				.setRotation( -90, -2, 0 )
-				.addEventListener( "mousedown", onSunClick )
-				.addEventListener( "touchstart", onSunClick )
-				.update()
-		);
-	
-		// CLOUD //
-		var cloudY, cloudZ;
-		for( var i = 0; i < 7; i++ ) {
-			cloudY = (Math.random()*1.4-.4)*boxSize;
-			cloudZ = Math.random()*190+300;
-			clouds.push( boxTop.addChild( 
-				new Sprite3D()
-					.setClassName("cloud"+Math.ceil(Math.random()*3))
-					.setTransformString( "_p _rx _rz _ry _s" )
-					.setTransformOrigin( "62px", (750-40)+"px" )
-					.setRegistrationPoint( 62, 750-40, 0 )
-					.setPosition( (Math.random()*1.4-.2)*boxSize, cloudY, cloudZ )
-					.setRotation( -90, -Math.random()*10-5, 0 )
-					.setProperty( "targetY", cloudY )
-					.setProperty( "targetZ", cloudZ )
-					.update()
-			) );
-		
-		}
-	
-		// MOULIN //
-		var moulin = boxTop.addChild( 
-			new Sprite3D()
-				.setId("moulin")
-				.setRegistrationPoint( 60, 201, 0 )
-				.setTransformOrigin( "60px", "201px" )
-				.setPosition( 90, 380, 0 )
-				.setRotation( -90, 20, 0 )
-				.update()
-		);
-	
-		helix = moulin.addChild( 
-			new Sprite3D()
-				.setId("helix")
-				.setRegistrationPoint( 89, 93, 0 )
-				.setTransformOrigin( "89px", "93px" )
-				.setPosition( 60, 80, 5 )
-				.addEventListener( "mousedown", onHelixClick )
-				.addEventListener( "touchstart", onHelixClick )
-				.update()
-		);
-	
-		// UFO //
-		boxTop.addChild( 
-			new Sprite3D()
-				.setId("ufo")
-				.setTransformString( "_p _rx _rz _ry _s" )
-				.setRegistrationPoint( 61, 750-50, 0 )
-				.setTransformOrigin( "61px", "0px")//(750-50)+"px" )
-				.setPosition( boxSize>>1, boxSize>>1, 800 )
-				.setRotation( -90, -2, 0 )
-	//			.addEventListener( "mousedown", onSunClick )
-	//			.addEventListener( "touchstart", onSunClick )
-				.update()
-		);
-	
-	
-		// mouse listeners
-		document.addEventListener( "mousedown", onMouseDown, false );
-		document.addEventListener( "mousemove", onMouseMove, false );
-		document.addEventListener( "mouseup", onMouseUp, false );
-		// touch listeners
-		document.addEventListener( "touchstart", onTouchStart, false );
-		document.addEventListener( "touchmove", onTouchMove, false );
-		document.addEventListener( "touchend", onTouchEnd, false );
-		// window listeners
-		window.addEventListener( "resize", onResize, false );
-		window.addEventListener( "deviceorientation", onOrientation, false );
-		onResize();
-	
-		// animate
-		//setInterval( move, 1000 / 50 );
-		lastFrame = new Date().getTime();
-		animate();
-	}
 
 	// TOUCH LISTENERS ///////////////////////////////////
 	var onTouchStart = function(e) {
@@ -215,6 +65,7 @@
 
 	var onTouchEnd = function(e) {
 		if ( touched ) {
+			invite.className = "off";
 			var ts = e.changedTouches,
 				nt = ts.length;
 			while(nt--) {
@@ -258,6 +109,7 @@
 	}
 
 	var onMouseUp = function(e) {
+		invite.className = "off";
 		touched = false;
 		e.preventDefault();
 	}
@@ -269,7 +121,7 @@
 		sw = window.innerWidth;
 		sh = window.innerHeight;
 		var s = Math.min( sw, sh ) / 768.0;
-		stage.setScale( s, s, s ).update();
+		stage.scale( s, s, s ).update();
 	}
 
 	var onOrientation = function(e) {
@@ -282,22 +134,16 @@
 	var activateVache = function(vache) {
 		if ( lastVache ) 
 			lastVache
-				.setScale( lastVache.flipped?-1:1, 1, 1 )
+				.scale( lastVache.flipped?-1:1, 1, 1 )
 				.update();
-		/*
-		vache.flipped = !vache.flipped;
-		vache
-			.setScale( vache.flipped?-1.2:1.2, 1.4, 1 )
-			.rotateY( Math.random()*2-1 )
-			.update();
-			*/
 		lastVache = vache;
 	}
 
-	var onVacheTouch = function(e,sprite) {
+	var onVacheTouch = function(e) {
 		// move
-		var x = sprite.x + (Math.round(Math.random())*2-1) * 50,
-			y = sprite.y + (Math.round(Math.random())*2-1) * 50,
+		var sprite = this,
+			x = sprite.x() + (Math.round(Math.random())*2-1) * 50,
+			y = sprite.y() + (Math.round(Math.random())*2-1) * 50,
 			flipped = sprite.flipped;
 		// limit
 		if ( x < 50 ) x = 50;
@@ -306,9 +152,9 @@
 		if ( y > boxSize-50 ) y = boxSize - 50;
 		// move
 		sprite
-			.setPosition( x, y, 0 )
-			.setRotation( -90, (x/boxSize-.5) * 45, 0 )
-			.setProperty( "flipped", flipped )
+			.position( x, y, 0 )
+			.rotation( -90, (x/boxSize-.5) * 45, 0 )
+			.set( "flipped", flipped )
 			//.setScale( flipped?-1+Math.random()*.3:1+Math.random()*.3, 1+Math.random()*.3, 1 )
 			.update();
 				
@@ -317,15 +163,15 @@
 		e.stopImmediatePropagation();
 	}
 
-	var onVacheOver = function(e,sprite) {
-		activateVache(sprite);
+	var onVacheOver = function(e) {
+		activateVache(this);
 	}
 
-	var onVacheOut = function(e,sprite) {
+	var onVacheOut = function(e) {
 		
 	}
 
-	var onHelixClick = function(e,sprite) {
+	var onHelixClick = function(e) {
 		if ( targetWind == 0 ) {
 			targetWind = 1 + Math.random()*7;
 		} else {
@@ -335,10 +181,10 @@
 		e.stopImmediatePropagation();
 	}
 
-	var onSunClick = function(e,sprite) {
-		sprite
-			.setPosition( boxSize * Math.random(), -250, 360 )
-			.setRotation( -90, sprite.rotationY+180, 0 )
+	var onSunClick = function(e) {
+		this
+			.position( boxSize * Math.random(), -250, 360 )
+			.rotation( -90, this.rotationY()+180, 0 )
 			.update();
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -355,33 +201,33 @@
 		cpx += (px-cpx) * .1;
 		cpy += (py-cpy) * .1;
 		boxContainer
-			.setPosition( cpx*100, 230+cpy*50, -cpy*600-150)
-			.setRotation( 70 + cpy * 50, 0, cpx * 210 )
+			.position( cpx*100, 230+cpy*50, -cpy*600-150)
+			.rotation( 70 + cpy * 50, 0, cpx * 210 )
 			.update();
 	
 		wind += (targetWind-wind) * .01;
 		
-		helix.rotateZ(wind).update();
+		helix.rotate(0,0,wind).update();
 	
 		var n = clouds.length,
 			c, cx;
 		
 		while(n--) {
 			c = clouds[n];
-			cx = c.x;
+			cx = c.x();
 			if ( cx < -290 ) {
 				cx = -290-cx;
-				c.z = c.targetZ + cx*cx*.1;
+				c.z( c.targetZ + cx*cx*.1 );
 			} else if ( cx > boxSize+290 ) {
 				cx = cx - (boxSize+290);
-				c.z = c.targetZ + cx*cx*.1;
+				c.z( c.targetZ + cx*cx*.1 );
 				if ( cx > 110 ) {
 					c.targetY = (Math.random()*1.4-.4)*boxSize;
 					c.targetZ = Math.random()*190+300;
-					c.setPosition(-400 - Math.random()*400, c.targetY, 3000 );
+					c.position(-400 - Math.random()*400, c.targetY, 3000 );
 				}
 			}
-			c.moveX(wind).update();
+			c.move(wind,0,0).update();
 		}
 	}
 
@@ -390,17 +236,150 @@
 	// HELPER FUNCTIONS ///////////////////////////////////
 
 	var addBoxSide = function( id, px, py, r ) {
-		boxContainer.addChild(
-			new Sprite3D()
-				.setClassName("boxSide")
-				.setId(id)
-				.setTransformOrigin( "0px", "0px" )
-				.setTransformString( "_p _rx _rz _ry _s" )
-				.setPosition( px, py, 231 )
-				.setRotation( -90, r, 0 )
+		boxContainer.appendChild(
+			Sprite3D.create(".boxSide")
+				.set("id",id)
+				.transformOrigin( 0, 0 )
+				.transformString( "p rx rz ry s" )
+				.position( px, py, 231 )
+				.rotation( -90, r, 0 )
 				.update()
 		);
 	}
+	
+	
+	
+	
+	// OBJECT CREATION, PROCESS INIT ///////////////////////////////////
+	
+	invite = document.createElement("div");
+	invite.id = "invite";
+	document.body.appendChild(invite);
+ 
+	// BOX //
+	boxContainer = stage.appendChild( 
+		Sprite3D.create("boxContainer")
+			.origin( 640, 640 )
+			.position( 0,200,-600)
+			.rotation( 70,0,0 )
+			.transformString( "p rx rz ry s" )
+			.update()
+	);
+	boxTop = boxContainer.appendChild(
+		Sprite3D.create("boxTop")
+			.position( 358, 362, 231 )
+			.update()
+	);
+	// BOX SIDES //
+	addBoxSide( "boxSide1", 358, 937, 0 );
+	addBoxSide( "boxSide2", 358, 362, 270 );
+	addBoxSide( "boxSide3", 933, 362, 180 );
+	addBoxSide( "boxSide4", 933, 937, 90 );
 
-	init();
+	// COWS //
+	for( var i = 0; i < 5; i++ ) {
+		var x = (Math.random()*.8+.1),
+			flipped = Math.random()>.5;
+			
+		cows.push( boxTop.appendChild( 
+			Sprite3D.create(".vache"+Math.ceil(Math.random()*3))
+				.origin( 38, 78 )
+				.transformOrigin(38, 78 )
+				.position( x*boxSize, (Math.random()*.8+.1)*boxSize, 0 )
+				.rotation( -90, (x-.5) * 45, 0 )
+				.set( "flipped", flipped )
+				.bind( { mouseover: onVacheTouch, touchstart: onVacheTouch })
+				.update()
+		) );
+	}
+
+	// BANNER //
+	boxTop.appendChild( 
+		Sprite3D.create("banner")
+			.origin( 0, 332 )
+			.transformOrigin( 0, 332 )
+			.position( 10, 60, 0 )
+			.rotation( -90, .4, 0 )
+			.update()
+	);
+
+	// SUN //
+	boxTop.appendChild( 
+		Sprite3D.create("sun")
+			.transformString( "p rx rz ry s" )
+			.origin( 125, 750-136 )
+			.transformOrigin( 125, 750-136 )
+			.position( boxSize * .92, -250, 360 )
+			.rotation( -90, -2, 0 )
+			.bind( { mouseover: onSunClick, touchstart: onSunClick })
+			.update()
+	);
+
+	// CLOUD //
+	var cloudY, cloudZ;
+	for( var i = 0; i < 7; i++ ) {
+		cloudY = (Math.random()*1.4-.4)*boxSize;
+		cloudZ = Math.random()*190+300;
+		clouds.push( boxTop.appendChild( 
+			Sprite3D.create(".cloud"+Math.ceil(Math.random()*3))
+				.transformString( "p rx rz ry s" )
+				.transformOrigin( 62, 750-40 )
+				.origin( 62, 750-40 )
+				.position( (Math.random()*1.4-.2)*boxSize, cloudY, cloudZ )
+				.rotation( -90, -Math.random()*10-5, 0 )
+				.set( "targetY", cloudY )
+				.set( "targetZ", cloudZ )
+				.update()
+		) );
+	
+	}
+
+	// MOULIN //
+	var moulin = boxTop.appendChild( 
+		Sprite3D.create("moulin")
+			.origin( 60, 201 )
+			.transformOrigin( 60, 201 )
+			.position( 90, 380, 0 )
+			.rotation( -90, 20, 0 )
+			.update()
+	);
+
+	helix = moulin.appendChild( 
+		Sprite3D.create("helix")
+			.origin( 89, 93 )
+			.transformOrigin( 89, 93 )
+			.position( 60, 80, 5 )
+			.bind( { mousedown: onHelixClick, touchstart: onHelixClick })
+			.update()
+	);
+
+	// UFO //
+	boxTop.appendChild( 
+		Sprite3D.create("ufo")
+			.transformString( "p rx rz ry s" )
+			.origin( 61, 750-50 )
+			.transformOrigin( 61, 0)
+			.position( boxSize>>1, boxSize>>1, 800 )
+			.rotation( -90, -2, 0 )
+			.update()
+	);
+
+
+	// mouse listeners
+	document.addEventListener( "mousedown", onMouseDown, false );
+	document.addEventListener( "mousemove", onMouseMove, false );
+	document.addEventListener( "mouseup", onMouseUp, false );
+	// touch listeners
+	document.addEventListener( "touchstart", onTouchStart, false );
+	document.addEventListener( "touchmove", onTouchMove, false );
+	document.addEventListener( "touchend", onTouchEnd, false );
+	// window listeners
+	window.addEventListener( "resize", onResize, false );
+	window.addEventListener( "deviceorientation", onOrientation, false );
+	onResize();
+
+	// animate
+	//setInterval( move, 1000 / 50 );
+	lastFrame = new Date().getTime();
+	animate();
 })();

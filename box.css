@@ -13,7 +13,7 @@ body {
 	width: 1280px;
 	height: 1280px;
 	background-image: url("img/carton.jpg");
-	background-position: 0px 21px;
+	background-position: 0px 0px;
 	background-size: 2000px 1280px;
 }
 
@@ -43,6 +43,7 @@ body {
 	cursor: pointer;
 /*	background-size: 2000px 1280px;*/	
 	-webkit-transition: all .12s ease-out;
+	-Moz-transition: all .12s ease-out;
 }
 .vache2 {
 	width: 100px;
@@ -51,6 +52,7 @@ body {
 	cursor: pointer;
 /*	background-size: 2000px 1280px;*/	
 	-webkit-transition: all .14s ease-out;
+	-Moz-transition: all .14s ease-out;
 }
 .vache3 {
 	width: 100px;
@@ -59,6 +61,7 @@ body {
 	cursor: pointer;
 /*	background-size: 2000px 1280px;*/	
 	-webkit-transition: all .1s ease-out;
+	-Moz-transition: all .1s ease-out;
 }
 
 #banner {
@@ -70,8 +73,10 @@ body {
 #sun {
 	width: 250px;
 	height: 750px;/*272px;*/
+	cursor: pointer;
 	background: url("img/soleil.png") center bottom no-repeat, url("img/cord.png") center no-repeat;
 	-webkit-transition: all .5s ease-in-out;
+	-Moz-transition: all .5s ease-in-out;
 }
 
 #ufo {
@@ -109,4 +114,20 @@ body {
 	height: 184px;
 	background-image: url("img/helice.png");
 	cursor: pointer;
+}
+#invite {
+	background: url('img/invite.png');
+	width: 300px;
+	height: 178px;
+	position: absolute;
+	top: 10px;
+	right: 100px;
+	z-index: 100;
+	-webkit-transition: all 0.5s ease-in;
+	-Moz-transition: all 0.5s ease-in;
+	-o-transition: all 0.5s ease-in;
+	-ms-transition: all 0.5s ease-in;
+}
+#invite.off {
+	right: -350px;
 }
